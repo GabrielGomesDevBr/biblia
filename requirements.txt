@@ -1,4 +1,18 @@
-streamlit==1.39.0  # Atualizado para a versão que você já tem instalada
-langchain==0.0.270  # Verifique a versão que é compatível com sua aplicação
-langchain-google-genai  # Não especifique uma versão específica, assim irá instalar a versão mais recente disponível
-PyYAML==6.0  # Mantém a versão do PyYAML
+# Atualização do pip
+pip==24.2
+
+# Streamlit
+streamlit==1.39.0
+
+# LangChain e integrações
+langchain==0.1.0
+langchain-google-genai==0.0.5
+
+# Google Generative AI
+google-generativeai==0.3.2
+
+# Outras dependências
+pyyaml==6.0.1
+
+# Variáveis de ambiente
+python-dotenv==1.0.0
