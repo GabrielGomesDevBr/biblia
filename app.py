@@ -58,7 +58,7 @@ Formate a resposta utilizando Markdown para melhor legibilidade.
 prompt_template = PromptTemplate.from_template(template)
 
 # Interface Streamlit
-st.set_page_config(page_title="BíbliaGuia - Seu Assistente de Estudos Bíblicos",  page_icon="📖", layout="wide")
+st.set_page_config(page_title="BíbliaGuia - Seu Assistente de Estudos Bíblicos", page_icon="📖", layout="wide")
 st.title('BíbliaGuia - Seu Assistente Personalizado de Estudos Bíblicos')
 
 # Carregar configuração
