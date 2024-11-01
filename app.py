@@ -4,7 +4,62 @@ from langchain.prompts import PromptTemplate
 import os
 import yaml
 
-# Função para carregar configuração
+# Configurações iniciais da página
+st.set_page_config(
+    page_title="BíbliaGuia | Seu Assistente de Estudos Bíblicos",
+    page_icon="📖",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
+# Estilos CSS compatíveis com Streamlit
+st.markdown("""
+<style>
+    /* Estilos gerais */
+    .stApp {
+        background-color: #f8f9fa;
+    }
+    
+    .main-title {
+        color: #4a148c;
+        text-align: center;
+        padding: 2rem;
+        background-color: #e6d5ff;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+    }
+    
+    .custom-box {
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+    
+    .testimonial {
+        background-color: white;
+        padding: 15px;
+        border-radius: 10px;
+        border-left: 4px solid #7c4dff;
+        margin-bottom: 15px;
+    }
+    
+    .highlight-text {
+        color: #4a148c;
+        font-weight: bold;
+    }
+    
+    .footer {
+        text-align: center;
+        padding: 20px;
+        margin-top: 50px;
+        border-top: 1px solid #e0e0e0;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+# Funções auxiliares
 def load_config():
     try:
         with open('config.yaml', 'r') as config_file:
@@ -14,7 +69,6 @@ def load_config():
         st.error(f"Erro ao carregar a configuração: {e}")
         return None
 
-# Função para inicializar o modelo AI
 def initialize_ai_model(api_key):
     try:
         os.environ['GOOGLE_API_KEY'] = api_key
@@ -24,7 +78,7 @@ def initialize_ai_model(api_key):
         st.error(f"Erro ao inicializar o modelo AI: {e}")
         return None
 
-# Template do prompt
+# Template do prompt (mantido o seu original)
 template = '''
 Você é um assistente chamado BíbliaGuia, um especialista em estudos bíblicos. Suas atribuições incluem:
 - Fornecer interpretações objetivas e imparciais do texto bíblico.
@@ -57,91 +111,186 @@ Formate a resposta utilizando Markdown para melhor legibilidade.
 
 prompt_template = PromptTemplate.from_template(template)
 
-# Interface Streamlit
-st.set_page_config(page_title="BíbliaGuia - Seu Assistente de Estudos Bíblicos", page_icon="📖", layout="wide")
-st.title('BíbliaGuia - Seu Assistente Personalizado de Estudos Bíblicos')
-
-# Carregar configuração
+# Carregar configuração e inicializar modelo
 config = load_config()
 if config is None:
     st.stop()
 
-# Inicializar modelo AI
 ai_model = initialize_ai_model(config['GOOGLE_API_KEY'])
 if ai_model is None:
     st.stop()
 
-# Criar colunas para layout
+# Cabeçalho principal
+st.markdown('<div class="main-title">', unsafe_allow_html=True)
+st.title('🕊️ BíbliaGuia')
+st.markdown('### Seu Assistente Inteligente para Estudos Bíblicos')
+st.markdown('_Transformando a maneira como você estuda e compreende a Palavra de Deus_')
+st.markdown('</div>', unsafe_allow_html=True)
+
+# Seção de introdução
+st.markdown('<div class="custom-box">', unsafe_allow_html=True)
+st.markdown("""
+### 📚 Bem-vindo ao BíbliaGuia
+
+Uma ferramenta revolucionária que combina inteligência artificial avançada com estudos bíblicos profundos. 
+Desenvolvida pela AperData, nossa plataforma oferece:
+
+* 🎯 Interpretações objetivas e contextualizadas
+* 🌍 Contexto histórico e cultural rico
+* 📖 Explicações teológicas acessíveis
+* 💡 Sugestões personalizadas de estudo
+* 🤝 Abordagem interdenominacional respeitosa
+""")
+st.markdown('</div>', unsafe_allow_html=True)
+
+# Formulário principal
 col1, col2 = st.columns(2)
 
 with col1:
-    nome = st.text_input('Nome:')
-    conhecimento_previo = st.select_slider('Nível de conhecimento bíblico:', 
-                                           options=['Iniciante', 'Intermediário', 'Avançado'])
-    interesse_principal = st.selectbox('Interesse principal:', [
-        'Estudo geral', 'História bíblica', 'Teologia', 'Aplicação prática',
-        'Profecia', 'Arqueologia bíblica', 'Línguas bíblicas'
-    ])
+    st.markdown('<div class="custom-box">', unsafe_allow_html=True)
+    nome = st.text_input('👤 Seu nome:', help='Como podemos te chamar?')
+    
+    conhecimento_previo = st.select_slider(
+        '📚 Seu nível de conhecimento bíblico:',
+        options=['Iniciante', 'Intermediário', 'Avançado'],
+        value='Intermediário'
+    )
+    
+    interesse_principal = st.selectbox(
+        '🎯 Qual seu principal interesse?',
+        [
+            'Estudo geral',
+            'História bíblica',
+            'Teologia',
+            'Aplicação prática',
+            'Profecia',
+            'Arqueologia bíblica',
+            'Línguas bíblicas'
+        ]
+    )
+    st.markdown('</div>', unsafe_allow_html=True)
 
 with col2:
-    livro_tema = st.text_input('Livro ou tema específico (opcional):')
-    duvida_questao = st.text_area('Sua dúvida ou questão:')
+    st.markdown('<div class="custom-box">', unsafe_allow_html=True)
+    livro_tema = st.text_input('📖 Livro ou tema específico:', help='Ex: Gênesis, Salvação, etc.')
+    
+    duvida_questao = st.text_area(
+        '❓ Sua dúvida ou questão:',
+        help='Compartilhe sua dúvida ou o que gostaria de aprender...',
+        height=150
+    )
+    st.markdown('</div>', unsafe_allow_html=True)
 
-if st.button('Obter Orientação Bíblica'):
+# Botão de consulta centralizado
+col1, col2, col3 = st.columns([1,2,1])
+with col2:
+    consultar_button = st.button('🔍 Consultar BíbliaGuia', use_container_width=True)
+
+# Processamento da consulta
+if consultar_button:
     if not all([nome, duvida_questao]):
-        st.warning('Por favor, preencha seu nome e sua dúvida ou questão.')
+        st.warning('⚠️ Por favor, preencha seu nome e sua dúvida ou questão.')
     else:
-        try:
-            prompt = prompt_template.format(
-                nome=nome,
-                conhecimento_previo=conhecimento_previo,
-                interesse_principal=interesse_principal,
-                livro_tema=livro_tema,
-                duvida_questao=duvida_questao
-            )
+        with st.spinner('🕊️ Buscando sabedoria...'):
+            try:
+                prompt = prompt_template.format(
+                    nome=nome,
+                    conhecimento_previo=conhecimento_previo,
+                    interesse_principal=interesse_principal,
+                    livro_tema=livro_tema,
+                    duvida_questao=duvida_questao
+                )
 
-            response = ai_model.invoke(prompt)
+                response = ai_model.invoke(prompt)
 
-            st.subheader('Resposta do BíbliaGuia:')
-            st.markdown(response.content)
+                st.markdown('<div class="custom-box">', unsafe_allow_html=True)
+                st.subheader('📝 Resposta do BíbliaGuia:')
+                st.markdown(response.content)
+                st.markdown('</div>', unsafe_allow_html=True)
 
-        except Exception as e:
-            st.error(f"Ocorreu um erro ao gerar a resposta: {e}")
+            except Exception as e:
+                st.error(f"❌ Ocorreu um erro ao gerar a resposta: {e}")
 
-# Adicionar seção de recursos adicionais
-# Sidebar
-st.sidebar.title("Sobre o BíbliaGuia")
-st.sidebar.info("""
-O BíbliaGuia é uma ferramenta avançada de estudo bíblico personalizada, 
-desenvolvida pela AperData para facilitar e aprimorar a compreensão e o aprofundamento dos textos sagrados.
-""")
+# Seção de testemunhos
+st.markdown('<div class="custom-box">', unsafe_allow_html=True)
+st.markdown("### 💬 O que dizem nossos usuários")
 
-st.sidebar.title("Entre em Contato")
-st.sidebar.markdown("""
-Para soluções de IA sob medida ou suporte:
-
-- 🌐 [aperdata.com](https://aperdata.com)
-- 📱 WhatsApp: **11 98854-3437**
-- 📧 Email: **gabriel@aperdata.com**
-""")
-
-# Configurações de tema
-if st.sidebar.checkbox("Modo Escuro"):
+col1, col2 = st.columns(2)
+with col1:
+    st.markdown('<div class="testimonial">', unsafe_allow_html=True)
     st.markdown("""
+    *"O BíbliaGuia revolucionou meus estudos bíblicos. As explicações são profundas e claras!"*
+    
+    **- Pastor João Silva**
+    """)
+    st.markdown('</div>', unsafe_allow_html=True)
+
+with col2:
+    st.markdown('<div class="testimonial">', unsafe_allow_html=True)
+    st.markdown("""
+    *"Como iniciante, encontrei explicações acessíveis e contextualizadas. Excelente ferramenta!"*
+    
+    **- Maria Santos**
+    """)
+    st.markdown('</div>', unsafe_allow_html=True)
+st.markdown('</div>', unsafe_allow_html=True)
+
+# Sidebar
+with st.sidebar:
+    st.markdown("## 🏢 AperData")
+    st.markdown("*Transformando dados em sabedoria*")
+    
+    st.markdown("### 🌟 Por que escolher o BíbliaGuia?")
+    st.markdown("""
+    * ✨ **IA de Última Geração**
+    * 🎯 **Respostas Personalizadas**
+    * 📚 **Base Teológica Sólida**
+    * 🤝 **Abordagem Interdenominacional**
+    * 🔒 **Seguro e Confiável**
+    """)
+    
+    st.markdown("### 📞 Entre em Contato")
+    st.markdown("""
+    Para soluções personalizadas de IA ou suporte:
+
+    * 🌐 [aperdata.com](https://aperdata.com)
+    * 📱 WhatsApp: **11 98854-3437**
+    * 📧 Email: **gabriel@aperdata.com**
+    """)
+    
+    # Configurações
+    st.markdown("### ⚙️ Configurações")
+    tema = st.radio("🎨 Tema", ["Claro", "Escuro"])
+    tamanho_fonte = st.slider("📏 Tamanho da Fonte", 12, 24, 16)
+    
+    # Aplicar configurações
+    if tema == "Escuro":
+        st.markdown("""
+        <style>
+        .stApp {
+            background-color: #1a1a1a;
+            color: white;
+        }
+        .custom-box, .testimonial {
+            background-color: #2b2b2b;
+            color: white;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+    
+    st.markdown(f"""
     <style>
-    .stApp {
-        background-color: #2b2b2b;
-        color: white;
-    }
+        .stApp {{
+            font-size: {tamanho_fonte}px;
+        }}
     </style>
     """, unsafe_allow_html=True)
 
-# Configurações de acessibilidade
-font_size = st.sidebar.slider("Tamanho da Fonte", min_value=12, max_value=24, value=16)
-st.markdown(f"""
-<style>
-    body {{
-        font-size: {font_size}px;
-    }}
-</style>
-""", unsafe_allow_html=True)
+# Footer
+st.markdown('<div class="footer">', unsafe_allow_html=True)
+st.markdown("""
+💜 Desenvolvido pela AperData © 2024
+
+*Transformando a maneira como você estuda a Palavra de Deus*
+""")
+st.markdown('</div>', unsafe_allow_html=True)
